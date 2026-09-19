@@ -1,4 +1,5 @@
 import streamlit as st
+import chemistry_models as cm
 
 def show():
     st.title("🔤 Computational Chemistry Alphabet")
@@ -66,3 +67,78 @@ def show():
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        # Map Specific Letters to Workflow Models
+        if selected_letter == "R":
+            st.divider()
+            st.subheader("Simulação Associada: Cinética de Reação")
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                temp = st.slider("Temperatura (K)", 200, 600, 300, key="r_temp")
+                conc = st.slider("Concentração Inicial (M)", 0.1, 10.0, 1.0, key="r_conc")
+            with col2:
+                fig = cm.run_model_1_kinetics(temp, conc)
+                st.plotly_chart(fig, use_container_width=True)
+
+        elif selected_letter == "E":
+            st.divider()
+            st.subheader("Simulação Associada: Energia Livre de Gibbs (Termodinâmica)")
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                temp = st.slider("Temperatura Atual (K)", 200, 600, 298, key="e_temp")
+            with col2:
+                fig, dg = cm.run_model_2_thermodynamics(temp)
+                st.plotly_chart(fig, use_container_width=True)
+                if dg < 0:
+                    st.success(f"Reação Espontânea! ΔG = {dg:.2f} J/mol")
+                else:
+                    st.error(f"Reação Não-Espontânea. ΔG = {dg:.2f} J/mol")
+
+        elif selected_letter == "Y":
+            st.divider()
+            st.subheader("Simulação Associada: Superfície de Previsão de Rendimento")
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                temp = st.slider("Temperatura Otimizada (K)", 200, 600, 350, key="y_temp")
+                pressure = st.slider("Pressão (atm)", 0.1, 5.0, 2.0, key="y_press")
+            with col2:
+                fig, yield_pct = cm.run_model_3_yield_prediction(temp, pressure)
+                st.plotly_chart(fig, use_container_width=True)
+                st.metric("Rendimento Previsto", f"{yield_pct:.1f}%")
+
+        elif selected_letter == "A":
+            st.divider()
+            st.subheader("Simulação Associada: Curva de Titulação Ácido-Base")
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                volume = st.slider("Volume de Base Adicionado (mL)", 0.0, 50.0, 20.0, key="a_vol")
+                conc_acid = st.number_input("Concentração do Ácido Forte (M)", 0.01, 1.0, 0.1, key="a_acid")
+                conc_base = st.number_input("Concentração da Base Forte (M)", 0.01, 1.0, 0.1, key="a_base")
+            with col2:
+                fig, ph = cm.run_model_4_titration(volume, conc_acid, conc_base)
+                st.plotly_chart(fig, use_container_width=True)
+                st.metric("pH Atual", f"{ph:.2f}")
+
+        elif selected_letter == "M":
+            st.divider()
+            st.subheader("Simulação Associada: Cinética Enzimática (Michaelis-Menten)")
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                vmax = st.slider("Vmax (μM/s)", 10, 100, 50, key="m_vmax")
+                km = st.slider("Constante de Michaelis Km (μM)", 1, 50, 10, key="m_km")
+                s_conc = st.slider("Concentração do Substrato [S] (μM)", 0, 100, 20, key="m_s")
+            with col2:
+                fig, v0 = cm.run_model_5_michaelis_menten(vmax, km, s_conc)
+                st.plotly_chart(fig, use_container_width=True)
+                st.metric("Velocidade (v0)", f"{v0:.2f} μM/s")
+
+        elif selected_letter == "T":
+            st.divider()
+            st.subheader("Simulação Associada: Gráfico de Arrhenius (Energia de Ativação)")
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                ea = st.slider("Energia de Ativação Ea (kJ/mol)", 10, 150, 50, key="t_ea")
+            with col2:
+                fig = cm.run_model_6_arrhenius(ea)
+                st.plotly_chart(fig, use_container_width=True)
+
