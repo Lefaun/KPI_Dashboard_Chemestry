@@ -1,5 +1,6 @@
 import streamlit as st
 import chemistry_models as cm
+import alphabet_visualizations as av
 
 def show():
     st.title("🔤 Computational Chemistry Alphabet")
@@ -54,19 +55,13 @@ def show():
     
     if selected_letter in concepts:
         c = concepts[selected_letter]
-        st.markdown(f"""
-        <div class='dashboard-card' style='border-color: var(--accent-orange); display: flex; align-items: center; justify-content: space-between;'>
-            <div style='flex: 1;'>
-                <h1 style='font-size: 5rem; color: var(--accent-orange); margin: 0;'>{selected_letter}</h1>
-                <h2 style='margin: 0;'>{c['name']}</h2>
-            </div>
-            <div style='flex: 2; border-left: 1px solid var(--border-color); padding-left: 20px;'>
-                <h1 style='font-size: 4rem; text-align: center;'>{c['icon']}</h1>
-                <p><strong>Conceito:</strong> <span class='badge-orange'>{c['name']}</span></p>
-                <p><strong>Descrição:</strong> {c['desc']}</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Render the card using Streamlit columns instead of pure HTML so we can embed Plotly
+        st.markdown(f"<h1 style='font-size: 3rem; color: var(--accent-orange); margin-bottom: 0;'>{selected_letter} - {c['name']}</h1>", unsafe_allow_html=True)
+        st.markdown(f"<p style='font-size: 1.2rem; margin-bottom: 20px;'><strong>Descrição:</strong> {c['desc']}</p>", unsafe_allow_html=True)
+        
+        # Render the 25 mathematical models instead of emojis
+        fig_viz = av.get_alphabet_visualization(selected_letter)
+        st.plotly_chart(fig_viz, use_container_width=True)
 
         # Map Specific Letters to Workflow Models
         if selected_letter == "R":
