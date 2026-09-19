@@ -14,7 +14,7 @@ def local_css(file_name):
 local_css("styles.css")
 
 # Import pages
-from pages_module import auth, shop, workflow, kanban, spc_control, calendar_view, notifications
+from pages_module import auth, shop, workflow, kanban, spc_control, calendar_view, notifications, alphabet
 
 # Sidebar Navigation
 with st.sidebar:
@@ -26,6 +26,7 @@ with st.sidebar:
         
         pages = {
             "Workflow Models": workflow,
+            "Alfabeto da Química": alphabet,
             "Kanban Board": kanban,
             "SPC Control": spc_control,
             "Calendar": calendar_view,
@@ -33,6 +34,7 @@ with st.sidebar:
             "Services Shop": shop,
             "Account": auth
         }
+
         
         selection = st.radio("Navigation", list(pages.keys()))
         
